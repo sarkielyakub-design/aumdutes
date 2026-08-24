@@ -6,24 +6,32 @@ const volunteerApi = axios.create({
   timeout: 60000,
 });
 
+// ============================================================
+// REGISTER AUM VOLUNTEER
+// ============================================================
+
 export const registerVolunteer = async (formData) => {
   const response = await volunteerApi.post(
     "/register",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
+    formData
   );
 
   return response.data;
 };
 
+// ============================================================
+// GET VOLUNTEER
+// ============================================================
+
 export const getVolunteer = async (id) => {
   const response = await volunteerApi.get(`/${id}`);
+
   return response.data;
 };
+
+// ============================================================
+// VERIFY VOLUNTEER
+// ============================================================
 
 export const verifyVolunteer = async (registrationNo) => {
   const response = await volunteerApi.get(
@@ -33,10 +41,19 @@ export const verifyVolunteer = async (registrationNo) => {
   return response.data;
 };
 
+// ============================================================
+// GET ALL VOLUNTEERS
+// ============================================================
+
 export const getVolunteers = async () => {
   const response = await volunteerApi.get("/");
+
   return response.data;
 };
+
+// ============================================================
+// VOLUNTEER STATISTICS
+// ============================================================
 
 export const getVolunteerStats = async () => {
   const response = await volunteerApi.get(
@@ -45,6 +62,10 @@ export const getVolunteerStats = async () => {
 
   return response.data;
 };
+
+// ============================================================
+// DOWNLOAD MEMBERSHIP / VOLUNTEER CARD
+// ============================================================
 
 export const downloadMembershipCard = (
   registrationNo
