@@ -1,83 +1,93 @@
 import axios from "axios";
-import API_URL from "./Api";
 
-const volunteerApi = axios.create({
-  baseURL: `${API_URL}/api/volunteers`,
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://ypadn-backend-production.up.railway.app";
+
+
+// ============================================================
+// AXIOS API
+// ============================================================
+
+const api = axios.create({
+  baseURL: API_URL,
   timeout: 60000,
 });
 
 
 // ============================================================
-// REGISTER VOLUNTEER
+// ASSET URL
 // ============================================================
 
-export const registerVolunteer = async (formData) => {
-  const response = await volunteerApi.post(
-    "/register",
-    formData
-  );
+export const getAssetUrl = (path) => {
+  if (!path) {
+    return "";
+  }
 
-  return response.data;
+  const value = String(path).trim();
+
+  if (!value) {
+    return "";
+  }
+
+  // Already a complete URL
+  if (
+    value.startsWith("http://") ||
+    value.startsWith("https://")
+  ) {
+    return value;
+  }
+
+  // Remove filesystem prefix if backend accidentally
+  // returns something like /app/uploads/...
+  let cleanPath = value.replace(/\\/g, "/");
+
+  if (cleanPath.includes("/uploads/")) {
+    cleanPath =
+      "uploads/" +
+      cleanPath.split("/uploads/")[1];
+  }
+
+  // Remove leading slash
+  cleanPath = cleanPath.replace(/^\/+/, "");
+
+  return `${API_URL}/${cleanPath}`;
 };
 
 
 // ============================================================
-// GET SINGLE VOLUNTEER
+// AXIOS INTERCEPTOR
 // ============================================================
 
-export const getVolunteer = async (id) => {
-  const response = await volunteerApi.get(`/${id}`);
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
 
-  return response.data;
-};
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-
-// ============================================================
-// VERIFY VOLUNTEER
-// ============================================================
-
-export const verifyVolunteer = async (registrationNo) => {
-  const response = await volunteerApi.get(
-    `/verify/${registrationNo}`
-  );
-
-  return response.data;
-};
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 
 // ============================================================
-// GET ALL VOLUNTEERS
+// RESPONSE INTERCEPTOR
 // ============================================================
 
-export const getVolunteers = async () => {
-  const response = await volunteerApi.get("/");
+api.interceptors.response.use(
+  (response) => response,
 
-  return response.data;
-};
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+    }
 
-
-// ============================================================
-// VOLUNTEER STATISTICS
-// ============================================================
-
-export const getVolunteerStats = async () => {
-  const response = await volunteerApi.get(
-    "/stats/summary"
-  );
-
-  return response.data;
-};
+    return Promise.reject(error);
+  }
+);
 
 
-// ============================================================
-// MEMBERSHIP CARD URL
-// ============================================================
-
-export const downloadMembershipCard = (
-  registrationNo
-) => {
-  return `${API_URL}/api/volunteers/membership-card/${registrationNo}`;
-};
-
-
-export default volunteerApi;
+export default api;
