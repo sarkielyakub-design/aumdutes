@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#061A35"/>
+      <stop offset="1" stop-color="#087A3D"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="235" fill="#fff" stroke="#087A3D" stroke-width="22"/>
+  <circle cx="256" cy="256" r="205" fill="none" stroke="#061A35" stroke-width="8"/>
+  <path d="M256 95l92 48v76c0 83-55 132-92 151-37-19-92-68-92-151v-76z" fill="url(#g)"/>
+  <path d="M205 182h102v78H205z" fill="#fff" opacity=".95"/>
+  <path d="M221 182v78M291 182v78M238 182v78M274 182v78" stroke="#087A3D" stroke-width="8"/>
+  <text x="256" y="315" text-anchor="middle" font-family="Arial,sans-serif" font-size="72" font-weight="800" fill="#061A35">AUM</text>
+  <text x="256" y="350" text-anchor="middle" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#087A3D">TOGETHER • PROGRESS • UNITY</text>
+</svg>
