@@ -1,44 +1,83 @@
 import axios from "axios";
+import API_URL from "./Api";
 
-const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
-).replace(/\/$/, "");
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
+const volunteerApi = axios.create({
+  baseURL: `${API_URL}/api/volunteers`,
   timeout: 60000,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
 
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+// ============================================================
+// REGISTER VOLUNTEER
+// ============================================================
 
-  return config;
-});
+export const registerVolunteer = async (formData) => {
+  const response = await volunteerApi.post(
+    "/register",
+    formData
+  );
 
-export const getAssetUrl = (path) => {
-  if (!path) return "";
-  if (/^https?:\/\//i.test(path)) return path;
-  return `${API_BASE_URL}/${String(path).replace(/^\/+/, "")}`;
+  return response.data;
 };
 
-export const downloadAuthenticatedFile = async (path, filename) => {
-  const response = await api.get(path, {
-    responseType: "blob",
-  });
 
-  const url = window.URL.createObjectURL(response.data);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  anchor.remove();
-  window.URL.revokeObjectURL(url);
+// ============================================================
+// GET SINGLE VOLUNTEER
+// ============================================================
+
+export const getVolunteer = async (id) => {
+  const response = await volunteerApi.get(`/${id}`);
+
+  return response.data;
 };
 
-export default api;
+
+// ============================================================
+// VERIFY VOLUNTEER
+// ============================================================
+
+export const verifyVolunteer = async (registrationNo) => {
+  const response = await volunteerApi.get(
+    `/verify/${registrationNo}`
+  );
+
+  return response.data;
+};
+
+
+// ============================================================
+// GET ALL VOLUNTEERS
+// ============================================================
+
+export const getVolunteers = async () => {
+  const response = await volunteerApi.get("/");
+
+  return response.data;
+};
+
+
+// ============================================================
+// VOLUNTEER STATISTICS
+// ============================================================
+
+export const getVolunteerStats = async () => {
+  const response = await volunteerApi.get(
+    "/stats/summary"
+  );
+
+  return response.data;
+};
+
+
+// ============================================================
+// MEMBERSHIP CARD URL
+// ============================================================
+
+export const downloadMembershipCard = (
+  registrationNo
+) => {
+  return `${API_URL}/api/volunteers/membership-card/${registrationNo}`;
+};
+
+
+export default volunteerApi;
