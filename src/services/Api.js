@@ -1,18 +1,23 @@
 import axios from "axios";
 
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://ypadn-backend-production.up.railway.app";
+// ============================================================
+// AUM BACKEND URL
+// ============================================================
 
-console.log("API URL:", API_URL);
+export const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://aum-backend-production.up.railway.app";
 
 // ============================================================
-// AXIOS API
+// AXIOS INSTANCE
 // ============================================================
 
 const api = axios.create({
   baseURL: API_URL,
   timeout: 60000,
+  headers: {
+    Accept: "application/json",
+  },
 });
 
 // ============================================================
@@ -20,11 +25,15 @@ const api = axios.create({
 // ============================================================
 
 export const getAssetUrl = (path) => {
-  if (!path) return "";
+  if (!path) {
+    return "";
+  }
 
   let value = String(path).trim();
 
-  if (!value) return "";
+  if (!value) {
+    return "";
+  }
 
   // Already a complete URL
   if (
@@ -34,18 +43,21 @@ export const getAssetUrl = (path) => {
     return value;
   }
 
-  // Normalize Windows paths
+  // Normalize slashes
   value = value.replace(/\\/g, "/");
 
-  // Convert:
+  // Convert paths such as:
   // /app/uploads/cards/file.pdf
   // /uploads/cards/file.pdf
   // uploads/cards/file.pdf
+  //
   // into:
   // uploads/cards/file.pdf
 
   if (value.includes("/uploads/")) {
-    value = value.substring(value.indexOf("/uploads/") + 1);
+    value =
+      "uploads/" +
+      value.split("/uploads/")[1];
   }
 
   value = value.replace(/^\/+/, "");
@@ -62,7 +74,8 @@ api.interceptors.request.use(
     const token = localStorage.getItem("token");
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization =
+        `Bearer ${token}`;
     }
 
     return config;
@@ -85,5 +98,9 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// ============================================================
+// DEFAULT EXPORT
+// ============================================================
 
 export default api;

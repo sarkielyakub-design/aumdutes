@@ -1,13 +1,20 @@
 import axios from "axios";
-import API_URL from "./Api";
+import { API_URL } from "./Api";
+
+// ============================================================
+// AUM VOLUNTEER API
+// ============================================================
 
 const volunteerApi = axios.create({
   baseURL: `${API_URL}/api/volunteers`,
   timeout: 60000,
+  headers: {
+    Accept: "application/json",
+  },
 });
 
 // ============================================================
-// REGISTER AUM VOLUNTEER
+// REGISTER VOLUNTEER
 // ============================================================
 
 export const registerVolunteer = async (formData) => {
@@ -33,7 +40,9 @@ export const getVolunteer = async (id) => {
 // VERIFY VOLUNTEER
 // ============================================================
 
-export const verifyVolunteer = async (registrationNo) => {
+export const verifyVolunteer = async (
+  registrationNo
+) => {
   const response = await volunteerApi.get(
     `/verify/${registrationNo}`
   );
@@ -52,7 +61,7 @@ export const getVolunteers = async () => {
 };
 
 // ============================================================
-// VOLUNTEER STATISTICS
+// STATISTICS
 // ============================================================
 
 export const getVolunteerStats = async () => {
@@ -64,7 +73,7 @@ export const getVolunteerStats = async () => {
 };
 
 // ============================================================
-// DOWNLOAD MEMBERSHIP / VOLUNTEER CARD
+// DOWNLOAD MEMBERSHIP CARD
 // ============================================================
 
 export const downloadMembershipCard = (
